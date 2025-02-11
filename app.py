@@ -8,6 +8,10 @@ from datetime import datetime, timedelta
 SERVICE_ACCOUNT_FILE = "C:/Users/USER/Documents/2. Python/Console/jsonkeybookings.json"
 SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/14-snTxdOwetRBpARaD0tTZk-i53DdYWOeKmcgpaaL6I"
 
+# Load Google Sheets credentials from Streamlit Secrets
+creds_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"])
+creds = Credentials.from_service_account_info(creds_dict)
+
 # Authenticate
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
