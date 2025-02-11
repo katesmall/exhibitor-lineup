@@ -1,8 +1,7 @@
 streamlit
 pandas
-gspread
+gspread>=5.7.2
 google-auth
 google-auth-oauthlib
 google-auth-httplib2
-google-auth-json
 oauth2client
