@@ -1,4 +1,3 @@
-import json
 import streamlit as st
 import pandas as pd
 import gspread
@@ -6,26 +5,24 @@ from google.oauth2.service_account import Credentials
 from datetime import datetime, timedelta
 
 # Google Sheets setup
-SERVICE_ACCOUNT_FILE = "C:/Users/USER/Documents/2. Python/Console/jsonkeybookings.json"
 SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/14-snTxdOwetRBpARaD0tTZk-i53DdYWOeKmcgpaaL6I"
 
-# Load Google Sheets credentials from Streamlit Secrets
-creds_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"])
-creds = Credentials.from_service_account_info(creds_dict)
+# ✅ Authenticate using Streamlit Secrets
+if "GOOGLE_SHEETS_CREDENTIALS" in st.secrets:
+    creds = Credentials.from_service_account_info(st.secrets["GOOGLE_SHEETS_CREDENTIALS"])
+    client = gspread.authorize(creds)
+else:
+    st.error("Missing GOOGLE_SHEETS_CREDENTIALS secret. Please check Streamlit settings.")
 
-# Authenticate
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
-creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-client = gspread.authorize(creds)
-
-# Load Google Sheets
+# ✅ Load Google Sheets
 spreadsheet = client.open_by_url(SPREADSHEET_URL)
 bookings_ws = spreadsheet.worksheet("Bookings Raw Data")
 lineup_ws = spreadsheet.worksheet("4DPLEX Lineup Clean")
 
-# Convert to DataFrame
+# ✅ Convert to DataFrame
 bookings_df = pd.DataFrame(bookings_ws.get_all_records())
 lineup_df = pd.DataFrame(lineup_ws.get_all_records())
+
 
 # ✅ Standardize column names
 bookings_df.columns = bookings_df.columns.str.strip().str.replace(" ", "_").str.replace("\n", "_")
